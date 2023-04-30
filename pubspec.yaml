@@ -1,0 +1,29 @@
+name: first_flutter_app
+description: A new Flutter project.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+environment:
+  sdk: '>=2.19.6 <3.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  firebase_core: ^2.10.0
+  cloud_firestore: ^4.5.2
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+  http: any
+  sqflite: ^2.0.0
+  path: ^1.0.0
+  sqflite_common_ffi: ^2.0.0
+  path_provider: ^2.0.0
+  quantity_input: ^1.0.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/academyLogo.png
