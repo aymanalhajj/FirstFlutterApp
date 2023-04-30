@@ -1,7 +1,7 @@
 import 'package:first_flutter_app/data/services/sqlite_service.dart';
 import 'package:flutter/material.dart';
 
-import '../data/models/shopping_cart.dart';
+import '../../data/models/shopping_cart.dart';
 
 class ProductCard extends StatefulWidget {
   final ShoppingCart data;

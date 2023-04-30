@@ -37,7 +37,7 @@ class MyApp2 extends StatelessWidget {
       routes: {
         '/':(context) => const HomeScene(),
         '/login':(context) => const LoginScene(),
-        '/reserve': (context) => const ReserveScene(),
+        '/reserve': (context) => const ReserveScene(productList: []),
         '/rent_out':(context) => const RentoutScene(),
         '/return':(context) => const ReturnScene(),
         '/list':(context) => const ProductListScene(),

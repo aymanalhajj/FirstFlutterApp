@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:first_flutter_app/data/models/shopping_cart.dart';
-import 'package:first_flutter_app/scenes/product_card.dart';
+import 'package:first_flutter_app/scenes/sub_scene/product_card.dart';
+import 'package:first_flutter_app/scenes/reserve_scene.dart';
 import 'package:flutter/material.dart';
 import 'package:quantity_input/quantity_input.dart';
 
@@ -19,11 +20,6 @@ class CartScene extends StatefulWidget {
 
 class _CartSceneState extends State<CartScene> {
   late List<ShoppingCart> _productList;
-  List<ShoppingCart> quan = [
-    ShoppingCart(1, 'productName', 'productPath', 'productPrice', '1'),
-    ShoppingCart(1, 'productName', 'productPath', 'productPrice', '1'),
-    ShoppingCart(1, 'productName', 'productPath', 'productPrice', '1')
-  ];
   late SQLiteService _sqliteService;
   int simpleIntInput = 0;
   @override
@@ -66,7 +62,9 @@ class _CartSceneState extends State<CartScene> {
         actions: [
           ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/reserve');
+                Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  return ReserveScene(productList: _productList);
+                }));
               },
               child: Text('حجز')),
           ElevatedButton(
@@ -108,10 +106,7 @@ class _CartSceneState extends State<CartScene> {
               }
               _productList = snapshot.data!;
 
-              return
-
-
-                ListView.builder(
+              return ListView.builder(
                 itemCount: _productList.length,
                 itemBuilder: (context, index) {
                   return ProductCard(

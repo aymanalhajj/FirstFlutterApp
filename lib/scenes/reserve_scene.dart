@@ -1,18 +1,37 @@
 import 'dart:math';
 
+import 'package:first_flutter_app/data/models/reservation.dart';
+import 'package:first_flutter_app/data/models/reservation_item.dart';
+import 'package:first_flutter_app/scenes/reservations_scene.dart';
 import 'package:flutter/material.dart';
 
-class ReserveScene extends StatefulWidget {
-  const ReserveScene({super.key});
+import '../data/models/shopping_cart.dart';
+import '../data/services/sqlite_service.dart';
 
+class ReserveScene extends StatefulWidget {
+  const ReserveScene({super.key,required this.productList});
+  final List<ShoppingCart> productList;
   @override
   State<ReserveScene> createState() => _ReserveSceneState();
 }
 
 class _ReserveSceneState extends State<ReserveScene> {
-  DateTime reserveDate = DateTime.now();
-  DateTime rentoutDate = DateTime.now();
-  DateTime returnDate = DateTime.now();
+  late Map<String, dynamic> _data;
+  late SQLiteService _sqliteService;
+  int simpleIntInput = 0;
+  @override
+  void initState() {
+    super.initState();
+    _sqliteService = SQLiteService();
+    _data = {
+      'reservationId': 1,
+      'reserveDate': DateTime.now().millisecondsSinceEpoch,
+      'rentoutDate': DateTime.now().millisecondsSinceEpoch,
+      'returnDate': DateTime.now().millisecondsSinceEpoch,
+      'clientName': "",
+      'items': widget.productList.map((e) => e.toMap()).toList()
+    };
+  }
 
   Future<DateTime> _selectDate(
       BuildContext context, DateTime defaultDate) async {
@@ -28,11 +47,35 @@ class _ReserveSceneState extends State<ReserveScene> {
     }
   }
 
+  Future<void> saveReservation() async {
+    _sqliteService.addReservation(Reservation.fromMap(_data));
+    print("saveReservation");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("حجز الأصناف"),
+        actions: [
+        ElevatedButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (c) {
+                return const ReservationScene();
+              }));
+            },
+            child: Text('حجز')),
+        ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/reserve');
+            },
+            child: Text('تأجير')),
+        ElevatedButton(
+            onPressed: () {
+              debugPrint('');
+            },
+            child: Text('exit')),
+      ],
       ),
       body: Center(
           child: Container(
@@ -50,8 +93,13 @@ class _ReserveSceneState extends State<ReserveScene> {
             ]),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           TextFormField(
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
                 label: Text('اسم العميل'), prefixIcon: Icon(Icons.person)),
+            onChanged: (value) {
+              setState(() {
+                _data['clientName'] = value;
+              });
+            },
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -60,16 +108,16 @@ class _ReserveSceneState extends State<ReserveScene> {
                 'تاريخ الحجز: ',
                 style: TextStyle(color: Colors.red),
               ),
-              Text("${reserveDate.toLocal()}".split(' ')[0]),
+              Text("${DateTime.fromMillisecondsSinceEpoch(_data['reserveDate']).toLocal()}".split(' ')[0]),
               const SizedBox(
                 height: 20.0,
               ),
               IconButton(
                   icon: const Icon(Icons.date_range),
                   onPressed: () {
-                    _selectDate(context, reserveDate).then((value) {
+                    _selectDate(context, DateTime.fromMillisecondsSinceEpoch(_data['reserveDate'])).then((value) {
                       setState(() {
-                        reserveDate = value;
+                        _data['reserveDate'] = value.millisecondsSinceEpoch;
                       });
                     });
                   }),
@@ -82,16 +130,16 @@ class _ReserveSceneState extends State<ReserveScene> {
                 'تاريخ التأجير: ',
                 style: TextStyle(color: Colors.red),
               ),
-              Text("${rentoutDate.toLocal()}".split(' ')[0]),
+              Text("${DateTime.fromMillisecondsSinceEpoch(_data['rentoutDate']).toLocal()}".split(' ')[0]),
               const SizedBox(
                 height: 20.0,
               ),
               IconButton(
                   icon: const Icon(Icons.date_range),
                   onPressed: () {
-                    _selectDate(context, rentoutDate).then((value) {
+                    _selectDate(context, DateTime.fromMillisecondsSinceEpoch(_data['rentoutDate'])).then((value) {
                       setState(() {
-                        rentoutDate = value;
+                        _data['rentoutDate'] = value.millisecondsSinceEpoch;
                       });
                     });
                   }),
@@ -104,16 +152,16 @@ class _ReserveSceneState extends State<ReserveScene> {
                 'تاريخ الارجاع: ',
                 style: TextStyle(color: Colors.red),
               ),
-              Text("${returnDate.toLocal()}".split(' ')[0]),
+              Text("${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}".split(' ')[0]),
               const SizedBox(
                 height: 20.0,
               ),
               IconButton(
                   icon: const Icon(Icons.date_range),
                   onPressed: () {
-                    _selectDate(context, returnDate).then((value) {
+                    _selectDate(context, DateTime.fromMillisecondsSinceEpoch(_data['returnDate'])).then((value) {
                       setState(() {
-                        returnDate = value;
+                        _data['returnDate'] = value.millisecondsSinceEpoch;
                       });
                     });
                   }),
@@ -122,7 +170,7 @@ class _ReserveSceneState extends State<ReserveScene> {
           ElevatedButton(
               child: const Text("حجز"),
               onPressed: () {
-                //Navigator.pop(context);
+                saveReservation();
               })
         ]),
       )),
