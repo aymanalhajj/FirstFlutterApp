@@ -1,48 +1,28 @@
 import 'dart:math';
 
-import 'package:first_flutter_app/data/models/reservation.dart';
 import 'package:first_flutter_app/scenes/rentout_scene.dart';
-import 'package:first_flutter_app/scenes/reserve_scene.dart';
+import 'package:first_flutter_app/scenes/return_scene.dart';
 import 'package:flutter/material.dart';
 
 import '../Constants.dart';
 import '../data/models/rentout.dart';
-import '../data/models/shopping_cart.dart';
 import '../data/services/sqlite_service.dart';
 
-class ReservationScene extends StatefulWidget {
-  const ReservationScene({super.key});
-  final String title = "طلبات الحجز";
+class RentOutsScene extends StatefulWidget {
+  const RentOutsScene({super.key});
+  final String title = "طلبات التأجير";
   @override
-  State<ReservationScene> createState() => _ReservationSceneState();
+  State<RentOutsScene> createState() => _RentOutsSceneState();
 }
 
-class _ReservationSceneState extends State<ReservationScene> {
+class _RentOutsSceneState extends State<RentOutsScene> {
   late Map<String, dynamic> _data;
   late SQLiteService _sqliteService;
-  late List<Reservation> _list;
+  late List<Rentout> _list;
   @override
   void initState() {
     super.initState();
     _sqliteService = SQLiteService();
-  }
-
-  Future<DateTime> _selectDate(
-      BuildContext context, DateTime defaultDate) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: defaultDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
-    if (picked != null && picked != defaultDate) {
-      return Future.value(picked);
-    } else {
-      return Future.value(defaultDate);
-    }
-  }
-
-  Future<void> saveReservation() async {
-    _sqliteService.addReservation(Reservation.fromMap(_data));
   }
 
   @override
@@ -66,7 +46,7 @@ class _ReservationSceneState extends State<ReservationScene> {
                   blurRadius: 10.0)
             ]),
         child: FutureBuilder(
-            future: _sqliteService.getAllReservations(),
+            future: _sqliteService.getAllRentouts(),
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Material(
@@ -124,10 +104,10 @@ class _ReservationSceneState extends State<ReservationScene> {
                                   ElevatedButton(
                                       onPressed: () {
                                         Navigator.push(context, MaterialPageRoute(builder: (c) {
-                                          return RentOutScene(productList: _list[index].items!.map((e) => e.toMap()).toList(),reservation: _list[index],);
+                                          return ReturnScene(rentOut: _list[index]);
                                         }));
                                       },
-                                      child: const Text('تأجير'))
+                                      child: const Text('استرجاع'))
                                 ],
                               ),
                               ElevatedButton(
@@ -148,7 +128,7 @@ class _ReservationSceneState extends State<ReservationScene> {
           setState(() {
             _sqliteService.getItems().then((value) =>
                 Navigator.push(context, MaterialPageRoute(builder: (c) {
-                  return ReserveScene(productList: value);
+                  return RentOutScene(productList: value.map((e) => e.toMap()).toList(),);
                 })));
           });
         },

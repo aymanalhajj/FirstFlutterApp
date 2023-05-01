@@ -14,8 +14,6 @@ class ProductListScene extends StatefulWidget {
 }
 
 class _ProductListSceneState extends State<ProductListScene> {
-
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

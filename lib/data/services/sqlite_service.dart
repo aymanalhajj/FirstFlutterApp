@@ -48,7 +48,7 @@ class SQLiteService {
                 "create table RentoutItem(itemId integer primary key autoincrement ,rentoutId integer, productId integer , productName text , productQuantity text , productPrice text)",
               );
               await db.execute(
-                "create table RentoutReturn(returnId integer primary key autoincrement ,rentoutId integer, returnDate int ,returnedBy text)",
+                "create table RentoutReturn(returnId integer primary key autoincrement ,rentoutId integer, returnDate int ,clientName text)",
               );
             }));
     return db;

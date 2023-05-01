@@ -1,15 +1,12 @@
-import 'dart:convert';
 import 'dart:math';
 
 import 'package:first_flutter_app/data/models/shopping_cart.dart';
 import 'package:first_flutter_app/scenes/sub_scene/product_card.dart';
 import 'package:first_flutter_app/scenes/reserve_scene.dart';
 import 'package:flutter/material.dart';
-import 'package:quantity_input/quantity_input.dart';
 
 import '../Constants.dart';
 import '../data/services/sqlite_service.dart';
-import '../repository/api_repository.dart';
 
 class CartScene extends StatefulWidget {
   const CartScene({super.key});
@@ -58,7 +55,7 @@ class _CartSceneState extends State<CartScene> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("سلة التسوق"),
+        title: const Text("سلة التسوق"),
         actions: [
           ElevatedButton(
               onPressed: () {
@@ -66,17 +63,17 @@ class _CartSceneState extends State<CartScene> {
                   return ReserveScene(productList: _productList);
                 }));
               },
-              child: Text('حجز')),
+              child: const Text('حجز')),
           ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/reserve');
               },
-              child: Text('تأجير')),
+              child: const Text('تأجير')),
           ElevatedButton(
               onPressed: () {
                 debugPrint('');
               },
-              child: Text('exit')),
+              child: const Text('exit')),
         ],
       ),
       body: Container(

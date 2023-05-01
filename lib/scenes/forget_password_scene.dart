@@ -1,68 +1,11 @@
 import 'dart:math';
 
+import 'package:first_flutter_app/scenes/sub_scene/app_drawer.dart';
 import 'package:flutter/material.dart';
 
 class ForgetPasswordScene extends StatelessWidget {
   const ForgetPasswordScene({super.key});
 
-  Widget getDrawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: <Widget>[
-          DrawerHeader(
-            child: Stack(
-              children: [
-                Image.asset('assets/images/academyLogo.png'),
-                Container(
-                  alignment: Alignment.bottomRight,
-                  child: const Text(
-                    'Pioneering Academy',
-                  ),
-                )
-              ],
-            ),
-          ),
-          ListTile(
-            selected: true,
-            leading: const Icon(Icons.looks_one),
-            title: const Text("حجز"),
-            onTap: () {
-              Navigator.pushNamed(context, '/reserve');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.looks_two),
-            title: const Text("تأجير"),
-            onTap: () {
-              Navigator.pushNamed(context, '/rent_out');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.looks_3),
-            title: const Text("إرجاع"),
-            onTap: () {
-              Navigator.pushNamed(context, '/return');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.looks_3),
-            title: const Text("الرئيسية"),
-            onTap: () {
-              Navigator.pushNamed(context, '/list');
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.looks_3),
-            title: const Text("تسجيل الخروج"),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +13,7 @@ class ForgetPasswordScene extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Forget Password"),
       ),
-      drawer: getDrawer(context),
+      drawer: const AppDrawer(),
       body: Container(
         width: 500,
         margin: const EdgeInsets.all(10),

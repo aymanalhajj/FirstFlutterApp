@@ -3,13 +3,14 @@ import 'dart:math';
 import 'package:first_flutter_app/data/models/reservation.dart';
 import 'package:first_flutter_app/data/models/reservation_item.dart';
 import 'package:first_flutter_app/scenes/reservations_scene.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/models/shopping_cart.dart';
 import '../data/services/sqlite_service.dart';
 
 class ReserveScene extends StatefulWidget {
-  const ReserveScene({super.key,required this.productList});
+  const ReserveScene({super.key, required this.productList});
   final List<ShoppingCart> productList;
   @override
   State<ReserveScene> createState() => _ReserveSceneState();
@@ -49,7 +50,10 @@ class _ReserveSceneState extends State<ReserveScene> {
 
   Future<void> saveReservation() async {
     _sqliteService.addReservation(Reservation.fromMap(_data));
-    print("saveReservation");
+    Navigator.pop(context);
+    if (kDebugMode) {
+      print("saveReservation");
+    }
   }
 
   @override
@@ -58,24 +62,14 @@ class _ReserveSceneState extends State<ReserveScene> {
       appBar: AppBar(
         title: const Text("حجز الأصناف"),
         actions: [
-        ElevatedButton(
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (c) {
-                return const ReservationScene();
-              }));
-            },
-            child: Text('حجز')),
-        ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/reserve');
-            },
-            child: Text('تأجير')),
-        ElevatedButton(
-            onPressed: () {
-              debugPrint('');
-            },
-            child: Text('exit')),
-      ],
+          ElevatedButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (c) {
+                  return const ReservationScene();
+                }));
+              },
+              child: Text('حجز'))
+        ],
       ),
       body: Center(
           child: Container(
@@ -108,14 +102,20 @@ class _ReserveSceneState extends State<ReserveScene> {
                 'تاريخ الحجز: ',
                 style: TextStyle(color: Colors.red),
               ),
-              Text("${DateTime.fromMillisecondsSinceEpoch(_data['reserveDate']).toLocal()}".split(' ')[0]),
+              Text(
+                  "${DateTime.fromMillisecondsSinceEpoch(_data['reserveDate']).toLocal()}"
+                      .split(' ')[0]),
               const SizedBox(
                 height: 20.0,
               ),
               IconButton(
                   icon: const Icon(Icons.date_range),
                   onPressed: () {
-                    _selectDate(context, DateTime.fromMillisecondsSinceEpoch(_data['reserveDate'])).then((value) {
+                    _selectDate(
+                            context,
+                            DateTime.fromMillisecondsSinceEpoch(
+                                _data['reserveDate']))
+                        .then((value) {
                       setState(() {
                         _data['reserveDate'] = value.millisecondsSinceEpoch;
                       });
@@ -130,14 +130,20 @@ class _ReserveSceneState extends State<ReserveScene> {
                 'تاريخ التأجير: ',
                 style: TextStyle(color: Colors.red),
               ),
-              Text("${DateTime.fromMillisecondsSinceEpoch(_data['rentoutDate']).toLocal()}".split(' ')[0]),
+              Text(
+                  "${DateTime.fromMillisecondsSinceEpoch(_data['rentoutDate']).toLocal()}"
+                      .split(' ')[0]),
               const SizedBox(
                 height: 20.0,
               ),
               IconButton(
                   icon: const Icon(Icons.date_range),
                   onPressed: () {
-                    _selectDate(context, DateTime.fromMillisecondsSinceEpoch(_data['rentoutDate'])).then((value) {
+                    _selectDate(
+                            context,
+                            DateTime.fromMillisecondsSinceEpoch(
+                                _data['rentoutDate']))
+                        .then((value) {
                       setState(() {
                         _data['rentoutDate'] = value.millisecondsSinceEpoch;
                       });
@@ -152,14 +158,20 @@ class _ReserveSceneState extends State<ReserveScene> {
                 'تاريخ الارجاع: ',
                 style: TextStyle(color: Colors.red),
               ),
-              Text("${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}".split(' ')[0]),
+              Text(
+                  "${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}"
+                      .split(' ')[0]),
               const SizedBox(
                 height: 20.0,
               ),
               IconButton(
                   icon: const Icon(Icons.date_range),
                   onPressed: () {
-                    _selectDate(context, DateTime.fromMillisecondsSinceEpoch(_data['returnDate'])).then((value) {
+                    _selectDate(
+                            context,
+                            DateTime.fromMillisecondsSinceEpoch(
+                                _data['returnDate']))
+                        .then((value) {
                       setState(() {
                         _data['returnDate'] = value.millisecondsSinceEpoch;
                       });

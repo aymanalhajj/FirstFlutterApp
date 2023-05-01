@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:first_flutter_app/data/models/shopping_cart.dart';
+import 'package:first_flutter_app/scenes/sub_scene/app_drawer.dart';
 import 'package:flutter/material.dart';
 
 import '../Constants.dart';
@@ -29,117 +30,118 @@ class _HomeSceneState extends State<HomeScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("الرئيسية"),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/cart');
-              },
-              icon: Icon(Icons.shopping_basket),
-            )
-          ],
-        ),
-        body: Container(
-            margin: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-                //border: Border.all(width: 2, color: Colors.grey),
-                borderRadius: BorderRadius.circular(5.0),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset.fromDirection(0.25 * pi, 5.0),
-                      blurRadius: 10.0)
-                ]),
-            //child: GridView.extent(
-            //maxCrossAxisExtent: 200,
-            child: FutureBuilder(
-                future: ApiRepository.getProducts(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState != ConnectionState.done) {
-                    return const Material(
-                        child: Center(child: CircularProgressIndicator()));
-                  }
+      appBar: AppBar(
+        title: Text("الرئيسية"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/cart');
+            },
+            icon: Icon(Icons.shopping_basket),
+          )
+        ],
+      ),
+      drawer: const AppDrawer(),
+      body: Container(
+        margin: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+            //border: Border.all(width: 2, color: Colors.grey),
+            borderRadius: BorderRadius.circular(5.0),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  offset: Offset.fromDirection(0.25 * pi, 5.0),
+                  blurRadius: 10.0)
+            ]),
+        //child: GridView.extent(
+        //maxCrossAxisExtent: 200,
+        child: FutureBuilder(
+          future: ApiRepository.getProducts(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done) {
+              return const Material(
+                  child: Center(child: CircularProgressIndicator()));
+            }
 
-                  if (snapshot.hasError) {
-                    return Material(
-                        child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+            if (snapshot.hasError) {
+              return Material(
+                  child: Center(
+                      child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(Constants.fetchDataError),
+                  Text(snapshot.error.toString())
+                ],
+              )));
+            }
+            if (!snapshot.hasData) {
+              return Material(child: Text(Constants.noDataError));
+            }
+            final data = jsonDecode(utf8.decode(snapshot.data!.bodyBytes));
+            _productList = data['items']
+                .map<ShoppingCart>((p) => ShoppingCart.fromMap({
+                      'productPath': p["product_path"],
+                      'productName': p["product_name"],
+                      'productPrice': p["product_price"],
+                      'productId': p["product_id"],
+                    }))
+                .toList();
+            //final List dataList = jsonDecode(snapshot.data!.body);
+            final List<Widget> widgets = _productList
+                .map<Widget>(
+                  (p) => Center(
+                    child: SizedBox(
+                      width: 300,
+                      height: 150,
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black26, width: 1),
+                            borderRadius: BorderRadius.circular(2)),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Image.network(
+                              '${Constants.imageBaseURL}${p.productPath}',
+                              height: 140,
+                              width: 140,
+                              fit: BoxFit.cover,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
-                              Text(Constants.fetchDataError),
-                              Text(snapshot.error.toString())
-                            ],)));
-                  }
-                  if (!snapshot.hasData) {
-                    return Material(child: Text(Constants.noDataError));
-                  }
-                  final data =
-                      jsonDecode(utf8.decode(snapshot.data!.bodyBytes));
-                  _productList = data['items']
-                      .map<ShoppingCart>((p) => ShoppingCart.fromMap({
-                    'productPath': p["product_path"],
-                    'productName': p["product_name"],
-                    'productPrice': p["product_price"],
-                    'productId': p["product_id"],
-                  }) )
-                      .toList();
-                  //final List dataList = jsonDecode(snapshot.data!.body);
-                  final List<Widget> widgets = _productList
-                      .map<Widget>((p) => Center(
-                          child: SizedBox(
-                              width: 300,
-                              height: 150,
-                              child: Container(
-                                  margin: const EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black26, width: 1),
-                                      borderRadius: BorderRadius.circular(2)),
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.network(
-                                          'http://localhost:8080/ords/trade/trade_v1/get_file?p_mime_type=image/jpeg&p_file_name=${p.productPath}',
-                                          height: 140,
-                                          width: 140,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            //Image.asset('assets/images/academyLogo.png', fit: BoxFit.cover),
+                                Container(
+                                    padding: const EdgeInsets.all(5),
+                                    child: Text(p.productName)),
+                                Text('${p.productPrice} YER'),
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: IconButton(
+                                    color: Colors.deepPurple,
+                                    icon: const Icon(Icons.add_shopping_cart),
+                                    onPressed: () {
+                                      _sqliteService.addItem(p);
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+                .toList();
 
-                                            Container(
-                                                padding: EdgeInsets.all(5),
-                                                child: Text(
-                                                    p.productName)),
-
-                                            Text('${p.productPrice} YER'),
-                                            Align(
-                                                alignment: Alignment.bottomLeft,
-                                                child: IconButton(
-                                                  color: Colors.deepPurple,
-                                                  icon: const Icon(
-                                                      Icons.add_shopping_cart),
-                                                  onPressed: () {
-                                                    //_sqliteService.initDatabase();
-                                                    _sqliteService.addItem(p);
-                                                  },
-                                                ))
-                                          ],
-                                        )
-                                      ])))))
-                      .toList();
-
-                  return ListView(
-                    // scrollDirection: Axis.vertical,
-                    children: widgets,
-                  );
-                })));
+            return ListView(
+              // scrollDirection: Axis.vertical,
+              children: widgets,
+            );
+          },
+        ),
+      ),
+    );
   }
 }
