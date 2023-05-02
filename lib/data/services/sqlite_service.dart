@@ -39,13 +39,13 @@ class SQLiteService {
                 "create table Reservation(reservationId integer primary key autoincrement , reserveDate int , rentoutDate int , returnDate int,clientName text)",
               );
               await db.execute(
-                "create table ReservationItem(itemId integer primary key autoincrement ,reservationId integer, productId integer , productName text , productQuantity text , productPrice text)",
+                "create table ReservationItem(itemId integer primary key autoincrement ,reservationId integer, productId integer , productName text , productQuantity text , productPrice text,productPath text)",
               );
               await db.execute(
                 "create table Rentout(rentoutId integer primary key autoincrement ,reservationId integer, reserveDate int , rentoutDate int , returnDate int,clientName text)",
               );
               await db.execute(
-                "create table RentoutItem(itemId integer primary key autoincrement ,rentoutId integer, productId integer , productName text , productQuantity text , productPrice text)",
+                "create table RentoutItem(itemId integer primary key autoincrement ,rentoutId integer, productId integer , productName text , productQuantity text , productPrice text,productPath text)",
               );
               await db.execute(
                 "create table RentoutReturn(returnId integer primary key autoincrement ,rentoutId integer, returnDate int ,clientName text)",

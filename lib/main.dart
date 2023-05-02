@@ -9,7 +9,7 @@ import 'package:first_flutter_app/scenes/return_scene.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
-import 'scenes/product_list_scene.dart';
+import 'scenes/sub_scene/product_list_scene.dart';
 
 void main() {
   runApp(const MyApp2());
@@ -42,7 +42,7 @@ class MyApp2 extends StatelessWidget {
         '/reserve': (context) => const ReservationScene(),
         '/rent_out':(context) => const RentOutsScene(),
         '/return':(context) => const RentOutsScene(),
-        '/list':(context) => const ProductListScene(),
+        '/list':(context) => Text('data'),//const ProductListScene(),
         '/cart':(context) => const CartScene()
       },
     );

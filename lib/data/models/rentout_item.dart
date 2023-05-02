@@ -5,7 +5,8 @@ class RentoutItem {
   String productName;
   String productQuantity;
   String productPrice;
-  RentoutItem(this.itemId,  this.productId,
+  String productPath;
+  RentoutItem(this.productPath, this.itemId,  this.productId,
       this.productName, this.productQuantity, this.productPrice,this.rentoutId);
   RentoutItem.fromMap(Map<String, dynamic> item)
       : itemId = 1,
@@ -13,17 +14,19 @@ class RentoutItem {
             ? item['rentoutId']
             : 1,
         productId = item['productId'],
+        productPath = item['productPath'],
         productName = item['productName'],
         productQuantity = item['productQuantity'],
         productPrice = item['productPrice'];
   Map<String, dynamic> toMap() {
     return {
-      'itemId': itemId,
+      //'itemId': itemId,
       'rentoutId': rentoutId,
       'productId': productId,
       'productName': productName,
       'productQuantity': productQuantity,
       'productPrice': productPrice,
+      'productPath': productPath,
     };
   }
 }

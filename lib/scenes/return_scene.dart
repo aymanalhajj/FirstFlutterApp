@@ -3,13 +3,14 @@ import 'dart:math';
 import 'package:first_flutter_app/data/models/rentout.dart';
 import 'package:first_flutter_app/data/models/rentout_return.dart';
 import 'package:first_flutter_app/data/models/reservation.dart';
+import 'package:first_flutter_app/scenes/sub_scene/product_list_scene.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../data/services/sqlite_service.dart';
 
 class ReturnScene extends StatefulWidget {
-  const ReturnScene({super.key, required this.rentOut});
+  const ReturnScene({super.key, required this.rentOut,});
   final Rentout? rentOut;
   @override
   State<ReturnScene> createState() => _ReturnSceneState();
@@ -25,9 +26,12 @@ class _ReturnSceneState extends State<ReturnScene> {
     _sqliteService = SQLiteService();
     _data = {
       'returnId': 1,
-      'rentoutId': (widget.rentOut != null)? widget.rentOut!.rentoutId : null,
-      'returnDate':  (widget.rentOut != null)? widget.rentOut!.returnDate.millisecondsSinceEpoch : DateTime.now().millisecondsSinceEpoch,
-      'clientName': (widget.rentOut != null)? widget.rentOut!.clientName :"",
+      'rentoutId': (widget.rentOut != null) ? widget.rentOut!.rentoutId : null,
+      'returnDate': (widget.rentOut != null)
+          ? widget.rentOut!.returnDate.millisecondsSinceEpoch
+          : DateTime.now().millisecondsSinceEpoch,
+      'clientName': (widget.rentOut != null) ? widget.rentOut!.clientName : "",
+      'items': widget.rentOut!.items!.map((e) => e.toMap()).toList()
     };
   }
 
@@ -60,79 +64,90 @@ class _ReturnSceneState extends State<ReturnScene> {
         title: const Text("استرجاع الأصناف"),
       ),
       body: Center(
-          child: Container(
-        alignment: Alignment.center,
-        width: 500,
-        margin: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            //border: Border.all(width: 2, color: Colors.grey),
-            borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  offset: Offset.fromDirection(0.25 * pi, 5.0),
-                  blurRadius: 10.0)
-            ]),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          TextFormField(
-            controller: TextEditingController(
-                text: _data['rentoutId'].toString()
+        child: Column(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              margin: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                border: Border.all(width: 2, color: Colors.grey),
+                borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                color: Colors.white,
+              ),
+              child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          controller: TextEditingController(
+                              text: _data['rentoutId'].toString()),
+                          decoration: const InputDecoration(
+                              enabled: false,
+                              label: Text('رقم فاتورة التأجير'),
+                              prefixIcon: Icon(Icons.person)),
+                          onChanged: (value) {
+                            setState(() {
+                              _data['rentoutId'] = value;
+                            });
+                          },
+                        ),
+                        TextFormField(
+                          keyboardType: TextInputType.text,
+                          initialValue: _data['clientName'],
+                          decoration: const InputDecoration(
+                              label: Text('اسم العميل'),
+                              prefixIcon: Icon(Icons.person)),
+                          onChanged: (value) {
+                            setState(() {
+                              _data['clientName'] = value;
+                            });
+                          },
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            const Text(
+                              'تاريخ الارجاع: ',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            Text(
+                                "${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}"
+                                    .split(' ')[0]),
+                            const SizedBox(
+                              height: 20.0,
+                            ),
+                            IconButton(
+                                icon: const Icon(Icons.date_range),
+                                onPressed: () {
+                                  _selectDate(
+                                          context,
+                                          DateTime.fromMillisecondsSinceEpoch(
+                                              _data['returnDate']))
+                                      .then((value) {
+                                    setState(() {
+                                      _data['returnDate'] =
+                                          value.millisecondsSinceEpoch;
+                                    });
+                                  });
+                                }),
+                          ],
+                        ),
+                        ElevatedButton(
+                            child: const Text("إسترجاع"),
+                            onPressed: () {
+                              savedRentOutReturn();
+                            })
+                      ])),
             ),
-            decoration: const InputDecoration(
-              enabled: false,
-                label: Text('رقم فاتورة التأجير'), prefixIcon: Icon(Icons.person)),
-            onChanged: (value) {
-              setState(() {
-                _data['rentoutId'] = value;
-              });
-            },
-          ),
-          TextFormField(
-            keyboardType: TextInputType.text,
-            initialValue: _data['clientName'],
-            decoration: const InputDecoration(
-                label: Text('اسم العميل'), prefixIcon: Icon(Icons.person)),
-            onChanged: (value) {
-              setState(() {
-                _data['clientName'] = value;
-              });
-            },
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text(
-                'تاريخ الارجاع: ',
-                style: TextStyle(color: Colors.red),
+
+            Expanded(
+              child: ProductList(
+                productList: _data['items'],
               ),
-              Text(
-                  "${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}"
-                      .split(' ')[0]),
-              const SizedBox(
-                height: 20.0,
-              ),
-              IconButton(
-                  icon: const Icon(Icons.date_range),
-                  onPressed: () {
-                    _selectDate(
-                            context,
-                            DateTime.fromMillisecondsSinceEpoch(
-                                _data['returnDate']))
-                        .then((value) {
-                      setState(() {
-                        _data['returnDate'] = value.millisecondsSinceEpoch;
-                      });
-                    });
-                  }),
-            ],
-          ),
-          ElevatedButton(
-              child: const Text("إسترجاع"),
-              onPressed: () {
-                savedRentOutReturn();
-              })
-        ]),
-      )),
+            )],
+        ),
+      ),
     );
   }
 }
