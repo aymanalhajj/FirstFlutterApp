@@ -6,6 +6,7 @@ import 'package:first_flutter_app/scenes/rentouts_scene.dart';
 import 'package:first_flutter_app/scenes/reservations_scene.dart';
 import 'package:first_flutter_app/scenes/reserve_scene.dart';
 import 'package:first_flutter_app/scenes/return_scene.dart';
+import 'package:first_flutter_app/scenes/returns_scene.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -21,6 +22,7 @@ class MyApp2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       locale: const Locale("ar"),
       supportedLocales: const [
         Locale('ar'),
@@ -41,7 +43,7 @@ class MyApp2 extends StatelessWidget {
         '/login':(context) => const LoginScene(),
         '/reserve': (context) => const ReservationScene(),
         '/rent_out':(context) => const RentOutsScene(),
-        '/return':(context) => const RentOutsScene(),
+        '/return':(context) => const ReturnsScene(),
         '/list':(context) => Text('data'),//const ProductListScene(),
         '/cart':(context) => const CartScene()
       },

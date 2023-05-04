@@ -104,26 +104,28 @@ class _ReturnSceneState extends State<ReturnScene> {
                             });
                           },
                         ),
+
                         Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            const Text(
-                              'تاريخ الارجاع: ',
-                              style: TextStyle(color: Colors.red),
+                          children: <Widget>[Expanded(
+                            child: TextFormField(
+                              enabled: false,
+                              controller: TextEditingController(
+                                  text:
+                                  "${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}"
+                                      .split(' ')[0]),
+                              decoration: const InputDecoration(
+                                  label: Text('تاريخ الارجاع'),
+                                  prefixIcon: Icon(Icons.date_range)),
                             ),
-                            Text(
-                                "${DateTime.fromMillisecondsSinceEpoch(_data['returnDate']).toLocal()}"
-                                    .split(' ')[0]),
-                            const SizedBox(
-                              height: 20.0,
-                            ),
+                          ),
                             IconButton(
-                                icon: const Icon(Icons.date_range),
+                                icon: const Icon(Icons.date_range,color: Colors.blue),
                                 onPressed: () {
                                   _selectDate(
-                                          context,
-                                          DateTime.fromMillisecondsSinceEpoch(
-                                              _data['returnDate']))
+                                      context,
+                                      DateTime.fromMillisecondsSinceEpoch(
+                                          _data['returnDate']))
                                       .then((value) {
                                     setState(() {
                                       _data['returnDate'] =
@@ -133,7 +135,9 @@ class _ReturnSceneState extends State<ReturnScene> {
                                 }),
                           ],
                         ),
+                        const SizedBox(height: 5,),
                         ElevatedButton(
+                            style: ElevatedButton.styleFrom(padding: EdgeInsets.all(15)),
                             child: const Text("إسترجاع"),
                             onPressed: () {
                               savedRentOutReturn();

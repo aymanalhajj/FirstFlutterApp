@@ -44,15 +44,6 @@ class _HomeSceneState extends State<HomeScene> {
       drawer: const AppDrawer(),
       body: Container(
         margin: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-            //border: Border.all(width: 2, color: Colors.grey),
-            borderRadius: BorderRadius.circular(5.0),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  offset: Offset.fromDirection(0.25 * pi, 5.0),
-                  blurRadius: 10.0)
-            ]),
         //child: GridView.extent(
         //maxCrossAxisExtent: 200,
         child: FutureBuilder(
@@ -89,15 +80,14 @@ class _HomeSceneState extends State<HomeScene> {
             //final List dataList = jsonDecode(snapshot.data!.body);
             final List<Widget> widgets = _productList
                 .map<Widget>(
-                  (p) => Center(
+                  (p) =>
+
+                      Center(
                     child: SizedBox(
                       width: 300,
-                      height: 150,
-                      child: Container(
+                      child: Card(
+                        elevation: 8,
                         margin: const EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black26, width: 1),
-                            borderRadius: BorderRadius.circular(2)),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -105,7 +95,7 @@ class _HomeSceneState extends State<HomeScene> {
                               '${Constants.imageBaseURL}${p.productPath}',
                               height: 140,
                               width: 140,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,

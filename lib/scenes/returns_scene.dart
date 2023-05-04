@@ -1,25 +1,23 @@
 import 'dart:math';
 
-import 'package:first_flutter_app/scenes/rentout_detail_scene.dart';
 import 'package:first_flutter_app/scenes/rentout_scene.dart';
-import 'package:first_flutter_app/scenes/return_scene.dart';
+import 'package:first_flutter_app/scenes/return_detail_scene.dart';
 import 'package:flutter/material.dart';
 
 import '../Constants.dart';
-import '../data/models/rentout.dart';
 import '../data/services/sqlite_service.dart';
 import 'sub_scene/my_table_row.dart';
 
-class RentOutsScene extends StatefulWidget {
-  const RentOutsScene({super.key});
-  final String title = "طلبات التأجير";
+class ReturnsScene extends StatefulWidget {
+  const ReturnsScene({super.key});
+  final String title = "عمليات الإسترجاع";
   @override
-  State<RentOutsScene> createState() => _RentOutsSceneState();
+  State<ReturnsScene> createState() => _ReturnsSceneState();
 }
 
-class _RentOutsSceneState extends State<RentOutsScene> {
+class _ReturnsSceneState extends State<ReturnsScene> {
   late SQLiteService _sqliteService;
-  late List<Rentout> _list;
+  late List<Map<String, dynamic>> _list;
   @override
   void initState() {
     super.initState();
@@ -34,7 +32,7 @@ class _RentOutsSceneState extends State<RentOutsScene> {
       ),
       body: Center(
         child: FutureBuilder(
-            future: _sqliteService.getAllRentouts(),
+            future: _sqliteService.getAllRentoutReturn(),
             builder: (context, snapshot) {
               if (snapshot.connectionState != ConnectionState.done) {
                 return const Material(
@@ -55,7 +53,7 @@ class _RentOutsSceneState extends State<RentOutsScene> {
                   itemCount: _list.length,
                   itemBuilder: (context, index) {
                     return MyTableRow(
-                      data: _list[index].toMap(),
+                      data: _list[index],
                       actions: Padding(
                           padding: EdgeInsets.all(5),
                           child: Row(
@@ -65,20 +63,8 @@ class _RentOutsSceneState extends State<RentOutsScene> {
                                     onPressed: () {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (c) {
-                                        return ReturnScene(
-                                            rentOut: _list[index]);
-                                      }));
-                                    },
-                                    child: const Text('استرجاع')),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(context,
-                                          MaterialPageRoute(builder: (c) {
-                                        return RentOutDetailScene(
-                                            productList: _list[index]
-                                                .items!
-                                                .map((e) => e.toMap())
-                                                .toList(),
+                                        return ReturnDetailScene(
+                                            productList: _list[index]['items'],
                                             rentOut: _list[index]);
                                       }));
                                     },

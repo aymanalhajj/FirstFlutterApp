@@ -71,11 +71,13 @@ class SQLiteService {
   Future<List<Reservation>> getAllReservations() async {
     final db = await initDatabase();
     final List<Map<String, Object?>> reservationResult =
-    await db.query("Reservation");
-    return reservationResult.map((e){
+        await db.query("Reservation");
+    return reservationResult.map((e) {
       Reservation res = Reservation.fromMap(e);
-      Future<List<Map<String, Object?>>> result = db.query("ReservationItem",where: " reservationId = ?", whereArgs: [res.reservationId]);
-      result.then((value) => res.items = value.map((item) => ReservationItem.fromMap(item)).toList());
+      Future<List<Map<String, Object?>>> result = db.query("ReservationItem",
+          where: " reservationId = ?", whereArgs: [res.reservationId]);
+      result.then((value) => res.items =
+          value.map((item) => ReservationItem.fromMap(item)).toList());
 
       return res;
     }).toList();
@@ -83,7 +85,8 @@ class SQLiteService {
 
   Future<List<ReservationItem>> getReservationItems(int reservationId) async {
     final db = await initDatabase();
-    List<Map<String, Object?>> result = db.query("ReservationItem",where: " reservationId = ?", whereArgs: [reservationId]);
+    List<Map<String, Object?>> result = db.query("ReservationItem",
+        where: " reservationId = ?", whereArgs: [reservationId]);
     return result.map((item) => ReservationItem.fromMap(item)).toList();
   }
 
@@ -101,16 +104,15 @@ class SQLiteService {
     return result;
   }
 
-
-
   Future<List<Rentout>> getAllRentouts() async {
     final db = await initDatabase();
-    final List<Map<String, Object?>> rentoutResult =
-    await db.query("Rentout");
-    return rentoutResult.map((e){
+    final List<Map<String, Object?>> rentoutResult = await db.query("Rentout");
+    return rentoutResult.map((e) {
       Rentout res = Rentout.fromMap(e);
-      Future<List<Map<String, Object?>>> result = db.query("RentoutItem",where: " rentoutId = ?", whereArgs: [res.rentoutId]);
-      result.then((value) => res.items = value.map((item) => RentoutItem.fromMap(item)).toList());
+      Future<List<Map<String, Object?>>> result = db.query("RentoutItem",
+          where: " rentoutId = ?", whereArgs: [res.rentoutId]);
+      result.then((value) =>
+          res.items = value.map((item) => RentoutItem.fromMap(item)).toList());
 
       return res;
     }).toList();
@@ -118,7 +120,8 @@ class SQLiteService {
 
   Future<List<RentoutItem>> getRentoutItems(int rentoutId) async {
     final db = await initDatabase();
-    List<Map<String, Object?>> result = db.query("RentoutItem",where: " rentoutId = ?", whereArgs: [rentoutId]);
+    List<Map<String, Object?>> result = db
+        .query("RentoutItem", where: " rentoutId = ?", whereArgs: [rentoutId]);
     return result.map((item) => RentoutItem.fromMap(item)).toList();
   }
 
@@ -136,11 +139,37 @@ class SQLiteService {
     return result;
   }
 
-  Future<List<RentoutReturn>> getAllRentoutReturn() async {
+  Future<List<Map<String, dynamic>>> getAllRentoutReturn() async {
     final db = await initDatabase();
-    final List<Map<String, Object?>> list =
-    await db.query("RentoutReturn");
-    return list.map((e) => RentoutReturn.fromMap(e)).toList();
+    List<Map<String, dynamic>> finalList;
+    final List<Map<String, Object?>> list = await db.rawQuery(
+        'select ret.returnId,ret.rentoutId, ret.returnDate, rent.reserveDate , rent.rentoutDate ,rent.clientName from RentoutReturn ret,Rentout rent  where rent.rentoutId = ret.rentoutId');
+    finalList = list.map((e) {
+      Map<String, dynamic> ret = {
+        'returnId': e['returnId'],
+        'rentoutId': e['rentoutId'],
+        'returnDate': e['returnDate'],
+        'reserveDate': e['reserveDate'],
+        'rentoutDate': e['rentoutDate'],
+        'clientName': e['clientName'],
+        'items': {}
+      };
+      Future<List<Map<String, Object?>>> items = db.rawQuery(
+          'select productId , productName , productQuantity , productPrice,productPath  from RentoutItem item where item.rentoutId =${e['rentoutId']}');
+      items.then((value) {
+        ret['items'] = value;
+      });
+      return ret;
+    }).toList();
+    return finalList;
+  }
+
+  Future<List<Map<String, dynamic>>> getAllReturnItems() async {
+    final db = await initDatabase();
+    final List<Map<String, Object?>> returns = await db.rawQuery(
+        'select ret.returnId,ret.rentoutId, ret.returnDate, rent.reserveDate , rent.rentoutDate ,rent.clientName from RentoutReturn ret,Rentout rent  where rent.rentoutId = ret.rentoutId');
+    //final List<Map<String, Object?>> list = await db.rawQuery('select ret.returnId,ret.rentoutId, ret.returnDate, rent.reserveDate , rent.rentoutDate ,rent.clientName from RentoutReturn ret inner join RentoutItem item,Rentout rent  where ret.rentoutId= item.rentoutId and rent.rentoutId = item.rentoutId');
+    return returns;
   }
 
   Future<int> addRentoutReturn(RentoutReturn rentoutReturn) async {
@@ -149,6 +178,7 @@ class SQLiteService {
         conflictAlgorithm: ConflictAlgorithm.replace);
     return result;
   }
+
   Future<List<Reservation>> getReservation(int reservationId) async {
     final db = await initDatabase();
     final List<Map<String, Object?>> reservationResult = await db.query(
@@ -164,7 +194,6 @@ class SQLiteService {
       return res;
     }).toList();
   }
-
 
   Future<List<ShoppingCart>> getItems() async {
     final db = await initDatabase();

@@ -64,15 +64,6 @@ class _ReserveSceneState extends State<ReserveScene> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("حجز الأصناف"),
-        actions: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (c) {
-                  return const ReservationScene();
-                }));
-              },
-              child: const Text('حجز'))
-        ],
       ),
       body: Center(
         child: Column(
